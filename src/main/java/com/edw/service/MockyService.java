@@ -3,6 +3,7 @@ package com.edw.service;
 import com.edw.client.MockyApi01Client;
 import com.edw.client.MockyApi02Client;
 import com.edw.client.MockyApi03Client;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -37,6 +38,15 @@ public class MockyService {
         String result03 = mockyApi03Client.get("3000ms").await().indefinitely();
 
         return result01 + "," + result02 + "," + result03;
+    }
+
+    public Uni<String> getParallelCall() {
+        return Uni.combine().all().unis(
+                        mockyApi01Client.get("3000ms"),
+                        mockyApi02Client.get("3000ms"),
+                        mockyApi03Client.get("3000ms")
+                ).asTuple()
+                .map(tuple -> String.format("%s, %s, %s", tuple.getItem1(), tuple.getItem2(), tuple.getItem3()));
     }
 
 }

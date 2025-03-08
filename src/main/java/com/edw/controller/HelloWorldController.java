@@ -1,6 +1,7 @@
 package com.edw.controller;
 
 import com.edw.service.MockyService;
+import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -40,6 +41,19 @@ public class HelloWorldController {
                 .build();
 
         log.debug("finish opening hello-world page");
+
+        return response;
+    }
+
+    @GET
+    @Path("/parallel")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Response> parallelCall() {
+        log.debug("start opening hello-world page - parallel");
+
+        Uni<Response> response = mockyService.getParallelCall().map(data -> Response.ok(data).build());
+
+        log.debug("finish opening hello-world page - parallel");
 
         return response;
     }
