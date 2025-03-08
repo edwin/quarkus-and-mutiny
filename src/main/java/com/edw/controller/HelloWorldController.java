@@ -1,5 +1,7 @@
 package com.edw.controller;
 
+import com.edw.service.MockyService;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -23,15 +25,23 @@ public class HelloWorldController {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    @Inject
+    MockyService mockyService;
+
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response index() {
-        log.debug("opening index hello-world page");
-        return Response.ok(new HashMap(){{
-                    put("hello", "world");
+        log.debug("start opening hello-world page");
+
+        Response response = Response.ok(new HashMap(){{
+                    put("hello", mockyService.getSequentialCall());
                 }})
                 .build();
+
+        log.debug("finish opening hello-world page");
+
+        return response;
     }
 
 }
